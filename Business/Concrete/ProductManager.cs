@@ -2,7 +2,7 @@
 using Business.BusinessAspects.Autofac;
 using Business.Constants;
 using Business.ValidationRules.FluentValidation;
-using Core.Aspects.Autofac;
+using Core.Aspects.Autofac.Transaction;
 using Core.Aspects.Autofac.Caching;
 using Core.Aspects.Autofac.Validation;
 using Core.CrossCuttingConcerns.Validation;
@@ -32,7 +32,7 @@ namespace Business.Concrete
             _categoryService = categoryService;
         }
 
-        [SecuredOperation("product.add,admin")]
+        //[SecuredOperation("product.add,admin")]
         [ValidationAspect(typeof(ProductValidator))]
         [CacheRemoveAspect("IProductService.Get")]
         public IResult Add(Product product)
@@ -126,16 +126,16 @@ namespace Business.Concrete
             return new SuccessResult();
         }
 
-        //[TransactionScopeAspect]
+        [TransactionScopeAspect]
         public IResult AddTransactionalTest(Product product)
         {
-            Add(product);
-            if (product.UnitPrice < 10)
+            _productDal.Add(product);
+            if (product.UnitPrice < 600)
             {
-                throw new Exception("");
+                throw new Exception("HATA");
             }
-            Add(product);
-            return null;
+            _productDal.Add(product);
+            return new SuccessResult();
         }
     }
 }

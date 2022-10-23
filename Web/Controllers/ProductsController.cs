@@ -56,5 +56,16 @@ namespace Web.Controllers
             return BadRequest(result);
 
         }
+        [HttpPost("addtransactionaltest")]
+        public IActionResult AddTransactionalTest(Product product)
+        {
+            var result = _productService.AddTransactionalTest(product);
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+
+        }
     }
 }
